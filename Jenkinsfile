@@ -1,48 +1,45 @@
-pipeline
-{
+pipeline {
     agent any
-    stages
-    {
-        stage("Clean")
-        {
-            steps
-            {
-                sh ' sudo rm -rf /var/lib/jenkins/* '
-                sh ' docker stop $(docker ps -a -q) '
-                sh ' docker rm $(docker ps -a -q) '
-                sh ' docker rmi $(docker images -q) '
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    // Build Docker image
+                   docker build -t app .           
             }
         }
-        stage("Clone")
-        {   
-            steps
-            {
-                sh ' sudo git clone -b master https://github.com/IMPRIYASHIV/Docker_task.git '
+
+        stage('Test') {
+            steps {
+                script {
+                    // Run tests if needed
+                    // For a basic Java program, you might not need this stage
+                }
             }
         }
-        stage("Build")
-        {
-            steps
-            {
-                sh ' sudo docker build -t app /var/lib/jenkins/  '
-            }
-        }
-        stage("Run")
-        {
-            steps
-            {
-                sh ' sudo docker run -it -d app '
+
+        stage('Deploy') {
+            steps {
+                script {
+                    // Deploy the Docker image as needed
+                    // This could be pushing to a Docker registry or deploying to a Kubernetes cluster
+                }
             }
         }
     }
-    post 
-    {
-        success 
-        {
+
+    post {
+        success {
+            // Do something on successful build
             echo 'Build successful!'
+
+            // Clean up Docker images after successful build (optional)
+            cleanWs()
+            docker.image("my-java-app:${env.BUILD_ID}").remove()
         }
-        failure 
-        {
+        failure {
+            // Do something on build failure
             echo 'Build failed!'
         }
     }
