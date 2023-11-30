@@ -7,7 +7,7 @@ pipeline
         {
             steps
             {
-                sh ' sudo rm -rf /var/lib/jenkins/workspace/Docker/* '
+                sh ' sudo rm -rf /var/lib/jenkins/* '
                 sh ' docker stop $(docker ps -a -q) '
                 sh ' docker rm $(docker ps -a -q) '
                 sh ' docker rmi $(docker images -q) '
