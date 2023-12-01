@@ -1,46 +1,44 @@
-pipeline {
+pipeline
+{
     agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                script {
-                    // Build Docker image
-                 sh ' docker build -t app . '        
+    
+    stages
+    {
+        stage('Build')
+        {   
+            agent
+            {
+                 docker 
+                {
+                    // Use Docker with a specific image
+                        image 'myfirstimage:tag' // Replace with your Docker image and tag
+                        args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket for Docker inside Docker
+                }
             }
-        }
-
-        stage('Test') {
-            steps {
-                script {
-                    // Run tests if needed
-                    // For a basic Java program, you might not need this stage
+            steps
+            {
+                // Checkout your source code repository
+                git 'https://github.com/bhargavi1101gm/jenkins.git'  // Replace with your Git repository URL
+                // Build using Dockerfile
+                script 
+                {
+                    docker.build('myfirstimage:tag', '-f /Dockerfile .') // Replace image name, tag, and Dockerfile path
                 }
             }
         }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    // Deploy the Docker image as needed
-                    // This could be pushing to a Docker registry or deploying to a Kubernetes cluster
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            // Do something on successful build
-            echo 'Build successful!'
-
-            // Clean up Docker images after successful build (optional)
-            cleanWs()
-            docker.image("my-java-app:${env.BUILD_ID}").remove()
-        }
-        failure {
-            // Do something on build failure
-            echo 'Build failed!'
+       stage('Test') 
+        {
+            steps 
+               {
+                // Run tests or any other tasks within the Docker container
+                script 
+                   {
+                        docker.image('myfirstimage:tag').inside 
+                        {
+                            sh 'docker run -it myfirstimage' // Replace with your test commands
+                        }
+                   }
+              }
         }
     }
 }
