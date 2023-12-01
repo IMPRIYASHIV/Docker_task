@@ -11,18 +11,18 @@ pipeline
                  docker 
                 {
                     // Use Docker with a specific image
-                        image 'myfirstimage:tag' // Replace with your Docker image and tag
+                        image 'imageone:v1' // Replace with your Docker image and tag
                         args '-v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket for Docker inside Docker
                 }
             }
             steps
             {
                 // Checkout your source code repository
-                git 'https://github.com/bhargavi1101gm/jenkins.git'  // Replace with your Git repository URL
+                git 'https://github.com/IMPRIYASHIV/Docker_task.git'  // Replace with your Git repository URL
                 // Build using Dockerfile
                 script 
                 {
-                    docker.build('myfirstimage:tag', '-f /Dockerfile .') // Replace image name, tag, and Dockerfile path
+                    docker.build('imageone:v1', '-f /Dockerfile .') // Replace image name, tag, and Dockerfile path
                 }
             }
         }
@@ -33,9 +33,9 @@ pipeline
                 // Run tests or any other tasks within the Docker container
                 script 
                    {
-                        docker.image('myfirstimage:tag').inside 
+                        docker.image('imageone:v1').inside 
                         {
-                            sh 'docker run -it myfirstimage' // Replace with your test commands
+                            sh 'docker run -it imageone' // Replace with your test commands
                         }
                    }
               }
